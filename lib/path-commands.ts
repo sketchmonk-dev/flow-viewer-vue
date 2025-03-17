@@ -3,7 +3,7 @@
  * This file contains utility functions for common svg path commands
  */
 
-import { Point } from "./common";
+import { type Point } from "./common";
 
 /**
  * Generates an SVG move command for the given point.
