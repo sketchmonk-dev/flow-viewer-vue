@@ -197,7 +197,7 @@ export function generatePathString(
         } else if (targetSide === 'top') {
             commands.push(
                 c.quadraticBezier(p(m.r, vc), p(m.r-r, vc)),
-                c.horizontal(t.hc-r),
+                c.horizontal(t.hc+r),
                 c.quadraticBezier(p(t.hc, vc), p(t.hc, vc+r)),
             )
         } else {

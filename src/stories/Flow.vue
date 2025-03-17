@@ -19,7 +19,7 @@ import { FlowViewerConnection, FlowViewerConnectionLabel, FlowViewerNode, FlowVi
             <FlowViewerConnection
                 source="source"
                 target="target"
-                sourceSide="right"
+                sourceSide="left"
                 targetSide="left"
             >
                 <template #path="{ d }">
