@@ -9,6 +9,39 @@
 - **FlowViewerConnection**: A connection from one node to the next.
 - **FlowViewerConnectionLabel**: Used inside a FlowViewerConnection to add a label to the connection path.
 
+### Component APIs
+
+### FlowViewerRoot.vue
+
+| Prop           | Type     | Description                                | Default |
+| -------------- | -------- | ------------------------------------------ | ------- |
+| `margin`       | `number` | The margin around the flow viewer.         | 12      |
+| `cornerRadius` | `number` | The corner radius for the flow viewer.     | 8       |
+| `idPrefix`     | `string` | The prefix for IDs within the flow viewer. | 'flow'  |
+
+### FlowViewerNode.vue
+
+| Prop   | Type     | Description                                                      | Default |
+| ------ | -------- | ---------------------------------------------------------------- | ------- |
+| `name` | `string` | The name of the node. This is used to generate a unique node ID. | -       |
+
+### FlowViewerConnection.vue
+
+| Prop         | Type         | Description                                              | Default |
+| ------------ | ------------ | -------------------------------------------------------- | ------- |
+| `source`     | `string`     | The ID of the source node.                               | -       |
+| `target`     | `string`     | The ID of the target node.                               | -       |
+| `sourceSide` | `SourceSide` | The side of the source node where the connection starts. | -       |
+| `targetSide` | `TargetSide` | The side of the target node where the connection ends.   | -       |
+
+### FlowViewerConnectionLabel.vue
+
+| Prop     | Type     | Description                       | Default          |
+| -------- | -------- | --------------------------------- | ---------------- |
+| `width`  | `number` | The width of the label.           | 140              |
+| `height` | `number` | The height of the label.          | 20               |
+| `offset` | `Point`  | The offset position of the label. | `{ x: 0, y: 0 }` |
+
 ### Sample Usage
 
 Below is a sample usage of the library:

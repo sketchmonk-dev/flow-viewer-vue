@@ -19,13 +19,13 @@ import { FlowViewerConnection, FlowViewerConnectionLabel, FlowViewerNode, FlowVi
             <FlowViewerConnection
                 source="source"
                 target="target"
-                sourceSide="left"
+                sourceSide="bottom"
                 targetSide="left"
             >
                 <template #path="{ d }">
                     <path :d="d" stroke="black" stroke-width="2" fill="none" />
                 </template>
-                <FlowViewerConnectionLabel>
+                <FlowViewerConnectionLabel :offset="{ x: 50, y: 0 }">
                     <div class="label">
                         <div class="label__text">
                             Connection Label
