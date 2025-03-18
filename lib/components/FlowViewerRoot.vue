@@ -27,7 +27,7 @@ onMounted(() => {
     <div :style="{ position: 'relative'}" ref="root">
         <svg
             :view-box="`0 0 ${size.width} ${size.height}`"
-            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;" 
+            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;" 
             v-if="shouldMountConnections">
             <slot name="connections" />
         </svg>
