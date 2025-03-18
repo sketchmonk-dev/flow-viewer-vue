@@ -69,10 +69,20 @@ export type SourceSide = 'left' | 'bottom' | 'right';
 export type TargetSide = 'left' | 'top' | 'right';
 
 export interface FlowViewerOptions {
+    /**
+     * The margin around the nodes
+     */
     margin: number;
     /**
      * The corner radius for connections
      */
     cornerRadius: number;
+    /**
+     * Used to prefix the id of the nodes
+     */
     idPrefix: string;
+    /**
+     * enable/disable debug mode
+     */
+    debug?: boolean;
 }

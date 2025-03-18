@@ -1,7 +1,10 @@
 import { createInjectionState, useResizeObserver } from "@vueuse/core";
-import { type FlowViewerOptions, type GridGuides, p, type SourceSide, type TargetSide } from "../common";
+import { type FlowViewerOptions, type GridGuides, p, type Point, type SourceSide, type TargetSide } from "../common";
 import { computed, inject, type MaybeRefOrGetter, onWatcherCleanup, provide, ref, type Ref, toRef, watch } from "vue";
 import { computeGridGuides, generatePathString } from "../utils";
+import { Logger } from '../logger';
+
+const logger = new Logger('context.ts');
 
 interface FlowViewerState {
     root: Ref<HTMLElement | null>;
@@ -22,6 +25,9 @@ export const [useProvideFlowContext, useInjectFlowContext] = createInjectionStat
         const offset = ref({ x: 0, y: 0 });
         const size = ref({ width: 0, height: 0 });
         useResizeObserver([state.root, document.body], () => {
+            if (state.options.debug) {
+                logger.debug('resize observer on root called: updating size & offset', state.root.value);
+            }
             const entry = state.root.value;
             if (entry) {
                 const rect = entry.getBoundingClientRect();
@@ -64,14 +70,21 @@ export function useGridGuides(
 
     watch(toRef(source), (s) => {
         const el = getNodeEl(s);
+        if (options.debug) {
+            logger.debug(`useGridGuides: watcher on source called: ${s}`, el);
+        }
         if (el) {
             sourceRect.value = el.getBoundingClientRect();
             const observer = new ResizeObserver(() => {
                 sourceRect.value = el.getBoundingClientRect();
+                if (options.debug) {
+                    logger.debug('useGridGuides: sourceRect updated', sourceRect.value);
+                }
             })
             observer.observe(el);
             observer.observe(document.body);
             onWatcherCleanup(() => {
+                logger.info('useGridGuides: cleanup source watcher');
                 observer.disconnect();
             });
         }
@@ -79,14 +92,21 @@ export function useGridGuides(
 
     watch(toRef(target), (t) => {
         const el = getNodeEl(t);
+        if (options.debug) {
+            logger.debug(`useGridGuides: watcher on target called: ${t}`, el);
+        }
         if (el) {
             targetRect.value = el.getBoundingClientRect();
             const observer = new ResizeObserver(() => {
                 targetRect.value = el.getBoundingClientRect();
+                if (options.debug) {
+                    logger.debug('useGridGuides: targetRect updated', targetRect.value);
+                }
             })
             observer.observe(el);
             observer.observe(document.body);
             onWatcherCleanup(() => {
+                logger.info('useGridGuides: cleanup target watcher');
                 observer.disconnect();
             });
         }
@@ -96,7 +116,11 @@ export function useGridGuides(
         if (!sourceRect.value || !targetRect.value) {
             return null;
         }
-        return computeGridGuides(sourceRect.value, targetRect.value, offset.value, margin.value);
+        const g = computeGridGuides(sourceRect.value, targetRect.value, offset.value, margin.value);
+        if (options.debug) {
+            logger.debug('useGridGuides: computed guides', g);
+        }
+        return g;
     });
 
     return guides;
@@ -116,12 +140,16 @@ export function useComputedConnectionPathString(
     const targetSide$ = toRef(targetSide);
     const path = computed(() => {
         if (guides$.value) {
-            return generatePathString(
+            const p = generatePathString(
                 guides$.value,
                 sourceSide$.value,
                 targetSide$.value,
                 radius.value,
             )
+            if (options.debug) {
+                logger.debug('useComputedConnectionPathString: computed path', p);
+            }
+            return p;
         }
         return null;
     });
@@ -134,6 +162,7 @@ export function useComputedLabelPosition(
     sourceSide: MaybeRefOrGetter<SourceSide>,
     targetSide: MaybeRefOrGetter<TargetSide>,
 ) {
+    const { options } = useFlowContext();
     const guides$ = toRef(guides);
     const sourceSide$ = toRef(sourceSide);
     const targetSide$ = toRef(targetSide);
@@ -143,19 +172,24 @@ export function useComputedLabelPosition(
             const ss = sourceSide$.value;
             const ts = targetSide$.value;
             const { t, vc, m } = guides$.value;
+            let lp: Point | null = null;
             if ((ss === 'left' && ts === 'right') || (ss === 'right' && ts === 'left')) {
-                return p(t.hc, vc);
+                lp = p(t.hc, vc);
             } else if (ss === 'left' && (ts === 'left' || ts === 'top')) {
-                return p(m.l, vc)
+                lp = p(m.l, vc)
             } else if (ss === 'right' && (ts === 'right' || ts === 'top')) {
-                return p(m.r, vc)
+                lp = p(m.r, vc)
             } else if (ss === 'bottom' && ts === 'top') {
-                return p(t.hc, vc)
+                lp = p(t.hc, vc)
             } else if (ss === 'bottom' && ts === 'left') {
-                return p(m.l, vc)
+                lp = p(m.l, vc)
             } else if (ss === 'bottom' && ts === 'right') {
-                return p(m.r, vc)
+                lp = p(m.r, vc)
             }
+            if (options.debug) {
+                logger.debug('useComputedLabelPosition: computed label position', lp);
+            }
+            return lp;
         }
         return null;
     })
