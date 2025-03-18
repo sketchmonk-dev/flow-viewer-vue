@@ -12,11 +12,6 @@ type Props = {
   target: string;
   sourceSide: SourceSide;
   targetSide: TargetSide;
-  label?: {
-    enabled: boolean;
-    width?: number;
-    height?: number;
-  };
 };
 
 const props = defineProps<Props>();
